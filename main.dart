@@ -1,108 +1,88 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main(){
-  runApp(
-      MaterialApp(
-      title: "Tutorial 7- Shopping App",
-      home: TutorialSevenShoppingList(
-        products: <Product>[
-          Product(name: 'Eggs'),
-          Product(name: 'Flour'),
-          Product(name: 'Chocolate Chips')
-        ],
-      ),
-   )
-  );
+  runApp(MaterialApp(
+    home: MyShopApp(),
+  ));
 }
 
-////////////////////////////////////////
-class TutorialSevenShoppingList extends StatefulWidget{
-  TutorialSevenShoppingList({Key key, this.products}):super(key:key);//Classname(key, paramName) key because it holds another widget that changes
-  final List<Product> products;//paramname
-
-  _TutorialShoppingState createState()=>_TutorialShoppingState();
+class MyShopApp extends StatefulWidget{
+  @override
+  _shopListItem createState() => _shopListItem();
 }
+class _shopListItem extends State<MyShopApp>{
+  final List<String> products=<String>[];
+  final List<int> nProds=<int>[];
+  TextEditingController ProductNameController=TextEditingController();
 
-class Product{
-  Product({this.name}); // Classname(paramName)
-  final String name;//paramname
-}
 
-class _TutorialShoppingState extends State<TutorialSevenShoppingList>{
-  // Set is a collection of objects where each object can occur only once
-  //
-  Set<Product> TutorialShoppingCart = Set<Product>();//assigned var that changes
-
- //define function that helps in changing the above variable
-  void _handleCartChanged(Product product, bool inCart) {
-      setState(() {
-        if (!inCart) {
-          TutorialShoppingCart.add(product);
-        }else {
-          TutorialShoppingCart.remove(product);
-        }
-      });
+  void AddProduct(){
+    setState(() {
+      if(products.contains(ProductNameController.text)){
+        int ind=products.indexOf(ProductNameController.text);
+        nProds.insert(ind, nProds[ind]+1);
+      }else {
+        products.insert(0, ProductNameController.text);
+        nProds.insert(0, 0);
+      }
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Shopping List'),
+        title: Text("Today's shopping list"),
       ),
-      body: ListView(
-        children: widget.products.map((Product product){
-          return ShoppingListItem(//shopping list item class is defined below
-          product: product,
-          inCart: TutorialShoppingCart.contains(product),
-          onCartChanged: _handleCartChanged,
-          ///////////////cont here////////////////////////////////
-          );
-      }).toList(),
-    ),
-    );
-  }
-}
+      body: Column(
+        children: <Widget>[
+          Padding(
+              padding: EdgeInsets.all(20),
+              child:
+              Container(
+                child:
+                TextField(
+                  controller: ProductNameController,
+                  decoration: InputDecoration(
+                     border: OutlineInputBorder(),
+                     labelText: 'Add Item',
+                  ),
+                ),
+              ),
+              ),
+          RaisedButton(
+              child: Text('Add Item'),
+              onPressed: (){
+                AddProduct();
+              }
+          ),
+          Expanded(
+                child: ListView.builder(
+                    padding: const EdgeInsets.all(10),
+                    itemCount: products.length,
+                    itemBuilder: (BuildContext context, int index){
+                      return ListTile(
+                        title: Text('${products[index]} (${nProds[index]})',
+                           style: TextStyle(fontSize: 16),
+                        ),
+                        trailing: IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: (){
+                              setState(() {
+                                products.removeAt(index);
+                              });
+                            }
+                        ),
+                      );
+                    }
+                )
 
-
-typedef void CartChangedCallback(Product product, bool inCart);
-
-class ShoppingListItem extends StatelessWidget{
-  ShoppingListItem({this.product, this.inCart, this.onCartChanged}):super(key:ObjectKey(product));
-  final Product product;
-  final bool inCart;
-  final CartChangedCallback onCartChanged;
-
-//now define functions here
-  TextStyle _getTextStyle(BuildContext context){
-    if(!inCart) {
-      return null;
-    }
-    else{
-      return TextStyle(
-        color: Colors.black54,
-        decoration: TextDecoration.lineThrough,
-      );
-     }
-    }
-
- //override here
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: (){
-        onCartChanged(product, inCart);
-      },
-      leading: CircleAvatar(
-        backgroundColor: Colors.blue,
-        child: Text(product.name[0]),
-      ),//put the first name in circle
-      title: Text(
-        product.name,
-        style: _getTextStyle(context),// has to be dynamic. i.e. changes if cancelled or not
+          )
+        ],
       ),
     );
   }
-}
-//////////////////////////////////////////
 
+}
