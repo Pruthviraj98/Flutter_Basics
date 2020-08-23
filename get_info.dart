@@ -1,47 +1,31 @@
 import 'package:flutter/material.dart';
 import 'menu_drawer.dart';
-//import 'package:dartpedia/dartpedia.dart' as wiki;
-import 'package:http/http.dart' as http;
+import 'package:contactus/contactus.dart';
 
-
-class get_info extends StatefulWidget {
-  @override
-  _StateGetInfo createState() =>_StateGetInfo();
-}
-
-class _StateGetInfo extends State<get_info>{
-  String informataion="Go ahead! Search Anything!!";
-
-  TextEditingController WikiProductName =TextEditingController();
-
-
-
+class get_info extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: MenuDrawer(),
-      appBar: AppBar(
-        title: Text("Get Information of a Product"),
-      ),
-      body: Column(
-        children: <Widget>[
-          TextField(
-              controller: WikiProductName,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Search About Your Product',
-              )
+    return  Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.grey,
+          title: Text("About Developer", style: TextStyle(color: Colors.black, fontSize: 22)),
+        ),
+        drawer: MenuDrawer(),
+        backgroundColor: Colors.white70,
+        body: Container(
+          padding: EdgeInsets.all(20),
+          child:
+            ContactUs(
+            logo: AssetImage('lib/assets/icon/icon.png'),
+            email: 'pruthvir.patil98@gmail.com',
+            companyName: 'Pruthviraj R Patil',
+            phoneNumber: '+918754487085',
+            website: 'https://medium.com/@pruthvir.patil98',
+            githubUserName: 'Pruthviraj98',
+            linkedinURL: 'https://www.linkedin.com/in/pruthviraj1096/',
+            tagLine: 'Student at New York University',
+            instagram: '__pruthviraj',
           ),
-          RaisedButton(
-              child: Text("Search"),
-              onPressed: null, // assign wiki fun here later
-          ),
-          Expanded(
-              child: Text(
-                  informataion
-              )
-          ),
-        ],
       ),
     );
   }

@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
         'get_wiki_info': (BuildContext context) => new getinfo.get_info(),
       },
       initialRoute: 'home',
+
     );
   }
 }
@@ -136,66 +137,96 @@ class _shopListItem extends State<MyShopApp>{
 
   @override
   Widget build(BuildContext context) {
+
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
-      drawer: MenuDrawer(),
-      appBar: AppBar(
-        title: Text("Today's shopping list"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Padding(
-              padding: EdgeInsets.all(20),
-              child:
-              Container(
-                child:
-                TextField(
-                  controller: ProductNameController,
-                  decoration: InputDecoration(
-                     border: OutlineInputBorder(),
-                     labelText: 'Add Item',
+              drawer: MenuDrawer(),
+              appBar: AppBar(
+                backgroundColor: Colors.grey,
+                title: Text("Today's shopping list", style: TextStyle(color: Colors.black, fontSize: 22)),
+              ),
+              body:
+
+              Stack(
+                children:<Widget>[
+                  Center(
+                    child: new Image.asset(
+                      'lib/assets/icon/bg1.png',
+                      width: size.width,
+                      height: size.height,
+                      fit: BoxFit.fill,
+                      colorBlendMode: BlendMode.softLight,
+                    ),
                   ),
-                ),
-              ),
-              ),
-          RaisedButton.icon(
-              label: Text('Add Item'),
-              onPressed: (){
-                _incrementLists();
-              },
-              icon: Icon(Icons.shopping_cart),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0))
-              ),
-              splashColor: Colors.blue
-          ),
-          Expanded(
-                child: ListView.builder(
-                    padding: const EdgeInsets.all(10),
-                    itemCount: products.length,
-                    itemBuilder: (BuildContext context, int index){
-                      return ListTile(
-                        title:
-                        Text('${products[index]},  Quantity - (${nProds[index]})',
-                           style: TextStyle(fontSize: 18),
+
+
+                  Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child:
+                      Container(
+                        child:
+                        TextField(
+                          controller: ProductNameController,
+                          decoration: InputDecoration(
+                            filled: true, // this was a pain in the ass
+                            fillColor: Colors.white70,
+                             border: OutlineInputBorder(
+                               borderRadius: BorderRadius.circular(20.0),
+                             ),
+                             labelText: "Add Product",
+                          ),
                         ),
-                        trailing:
-                        Wrap(
-                          spacing: 12, // space between two icons
-                          children: <Widget>[
-                            IconButton(icon: Icon(Icons.close), onPressed: () => _decrementLists(index)), // icon-1
-                            IconButton(icon: Icon(Icons.remove_circle_outline), onPressed:() => _decrementProductNum(index)), // icon-2
-                          ],
-                        ),
+                      ),
+                      ),
+                  RaisedButton.icon(
+                      padding: EdgeInsets.only(left: 40, right: 40, top: 15, bottom: 15),
+                      label: Text('Add Item', style: TextStyle(fontSize: 18),),
+                      onPressed: (){
+                        _incrementLists();
+                      },
+                      icon: Icon(Icons.shopping_cart),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      ),
+                      splashColor: Colors.blue
+                  ),
+                  Expanded(
+                        child: ListView.builder(
+                            padding: const EdgeInsets.all(10),
+                            itemCount: products.length,
+                            itemBuilder: (BuildContext context, int index){
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white70
+                                ),
+                                child:
+                                ListTile(
+                                    title:
+                                    Text((index+1).toString()+'. ${products[index]},  Quantity - (${nProds[index]})',
+                                       style: TextStyle(fontSize: 18),
+                                    ),
+                                    trailing:
+                                    Wrap(
+                                      spacing: 12, // space between two icons
+                                      children: <Widget>[
+                                        IconButton(icon: Icon(Icons.remove_circle_outline), onPressed:() => _decrementProductNum(index), color: Colors.grey), // icon-2
+                                        IconButton(icon: Icon(Icons.close), onPressed: () => _decrementLists(index), color: Colors.redAccent), // icon-1
+                                      ],
+                                    ),
+                                  ),
+                              );
+                            }
+                        )
+                  ),
 
-
-                      );
-                    }
-                )
-
-          )
-        ],
-      ),
-    );
+                ],
+              ),],
+              ),
+            );
   }
 
 }
+

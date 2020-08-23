@@ -14,10 +14,17 @@ class MenuDrawer extends StatelessWidget {
         // This could be mapped from a List of items
         children: <Widget>[
           DrawerHeader(
-            padding: EdgeInsets.all(10),
-            child: Center(child: Text("Shoptick Navigator", style: TextStyle(fontSize: 24),)),
+            padding: EdgeInsets.all(20),
+            child: Center(
+                child: Column(
+                  children:[
+                    Image.asset('lib/assets/icon/icon.png', width: 70, height: 70),
+                    Text("Shoptick Navigator", style: TextStyle(fontSize: 24),),
+                  ]
+                )
+            ),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.grey,
             ),
           ),
           ListTile(
