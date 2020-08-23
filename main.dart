@@ -48,8 +48,8 @@ class _shopListItem extends State<MyShopApp>{
     SharedPreferences prefs2=await SharedPreferences.getInstance();
 
     setState(() {
-      products=(prefs1.getStringList('products')??<String>[]);
-      nProds=(prefs2.getStringList('nProds')??<String>[]);
+      products=(prefs1.getStringList('products'))??<String>[];
+      nProds=(prefs2.getStringList('nProds'))??<String>[];
     });
   }
 
@@ -87,13 +87,13 @@ class _shopListItem extends State<MyShopApp>{
       SharedPreferences prefs2=await SharedPreferences.getInstance();
 
       setState(() {
-           products= prefs1.getStringList('products')??<String>[];
-           nProds=prefs2.getStringList('nProds')??<String>[];
+           products= prefs1.getStringList('products');
+           nProds=prefs2.getStringList('nProds');
 
            products.removeAt(index);
-           prefs1.setStringList('products', products);
-
            nProds.removeAt(index);
+
+           prefs1.setStringList('products', products);
            prefs2.setStringList('nProds', nProds);
       });
 }
@@ -134,7 +134,7 @@ class _shopListItem extends State<MyShopApp>{
                     itemCount: products.length,
                     itemBuilder: (BuildContext context, int index){
                       return ListTile(
-                        title: Text('${products[index]} (${nProds[index]})',
+                        title:Text('${products[index]} (${nProds[index]})',
                            style: TextStyle(fontSize: 16),
                         ),
                         trailing: IconButton(
@@ -143,11 +143,6 @@ class _shopListItem extends State<MyShopApp>{
                               _decrementLists(index);
                             }
 
-//                                (){
-//                              setState(() {
-//                                products.removeAt(index);
-//                              });
-//                            }
 
 
                         ),
