@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -28,13 +29,15 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            contentPadding: EdgeInsets.all(20),
             leading: Icon(Icons.list),
-            title: Text('Home'),
+            title: Text('Home', style: TextStyle(fontSize: 20)),
             onTap: () => navigateToPage(context, 'home'),
           ),
           ListTile(
+            contentPadding: EdgeInsets.all(20),
             leading: Icon(Icons.info),
-            title: Text('Get Product In fo'),
+            title: Text('Developer Info', style: TextStyle(fontSize: 20),),
             onTap: () => navigateToPage(context, 'get_wiki_info'),
           ),
         ],
