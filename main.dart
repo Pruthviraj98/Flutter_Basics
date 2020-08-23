@@ -57,29 +57,42 @@ class _shopListItem extends State<MyShopApp>{
   //Adding elements to Lists after the click
 
   _incrementLists() async{
-    SharedPreferences prefs1=await SharedPreferences.getInstance();
-    SharedPreferences prefs2=await SharedPreferences.getInstance();
+    if(ProductNameController.text==""){
+//      print("Im here!!");
+      showDialog(
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 5), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+              title: Text('Alert!! - Please enter name of the product'),
+            );
+          });
+    }else{
+        SharedPreferences prefs1=await SharedPreferences.getInstance();
+        SharedPreferences prefs2=await SharedPreferences.getInstance();
 
+        setState(() {
+          products= prefs1.getStringList('products')??<String>[];
+          nProds=prefs2.getStringList('nProds')??<String>[];
 
-    setState(() {
-      products= prefs1.getStringList('products')??<String>[];
-      nProds=prefs2.getStringList('nProds')??<String>[];
+          if(products.contains(ProductNameController.text)){
 
-      if(products.contains(ProductNameController.text)){
+            int ind=products.indexOf(ProductNameController.text);
+            int temp=int.parse(nProds[ind]) +1;
+            nProds[ind]=temp.toString();
+            prefs2.setStringList('nProds', nProds);
 
-        int ind=products.indexOf(ProductNameController.text);
-        int temp=int.parse(nProds[ind]) +1;
-        nProds[ind]=temp.toString();
-        prefs2.setStringList('nProds', nProds);
+          }else {
+            products.insert(0, ProductNameController.text);
+            prefs1.setStringList('products', products);
 
-      }else {
-        products.insert(0, ProductNameController.text);
-        prefs1.setStringList('products', products);
-
-        nProds.insert(0, 1.toString());
-        prefs2.setStringList('nProds', nProds);
-      }
-    });
+            nProds.insert(0, 1.toString());
+            prefs2.setStringList('nProds', nProds);
+          }
+        });
+    }
   }
 
   _decrementLists(index) async{
@@ -96,8 +109,30 @@ class _shopListItem extends State<MyShopApp>{
            prefs1.setStringList('products', products);
            prefs2.setStringList('nProds', nProds);
       });
-}
+    }
 
+  _decrementProductNum (index) async{
+    SharedPreferences prefs1=await SharedPreferences.getInstance();
+    SharedPreferences prefs2=await SharedPreferences.getInstance();
+
+    setState(() {
+      products= prefs1.getStringList('products');
+      nProds=prefs2.getStringList('nProds');
+
+      int temp=int.parse(nProds[index]);
+
+      if(temp==1){
+        products.removeAt(index);
+        nProds.removeAt(index);
+      }else{
+        temp-=1;
+        nProds[index]=temp.toString();
+      }
+
+      prefs1.setStringList('products', products);
+      prefs2.setStringList('nProds', nProds);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,11 +157,16 @@ class _shopListItem extends State<MyShopApp>{
                 ),
               ),
               ),
-          RaisedButton(
-              child: Text('Add Item'),
+          RaisedButton.icon(
+              label: Text('Add Item'),
               onPressed: (){
                 _incrementLists();
-              }
+              },
+              icon: Icon(Icons.shopping_cart),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0))
+              ),
+              splashColor: Colors.blue
           ),
           Expanded(
                 child: ListView.builder(
@@ -134,18 +174,20 @@ class _shopListItem extends State<MyShopApp>{
                     itemCount: products.length,
                     itemBuilder: (BuildContext context, int index){
                       return ListTile(
-                        title:Text('${products[index]} (${nProds[index]})',
-                           style: TextStyle(fontSize: 16),
+                        title:
+                        Text('${products[index]},  Quantity - (${nProds[index]})',
+                           style: TextStyle(fontSize: 18),
                         ),
-                        trailing: IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: (){
-                              _decrementLists(index);
-                            }
-
-
-
+                        trailing:
+                        Wrap(
+                          spacing: 12, // space between two icons
+                          children: <Widget>[
+                            IconButton(icon: Icon(Icons.close), onPressed: () => _decrementLists(index)), // icon-1
+                            IconButton(icon: Icon(Icons.remove_circle_outline), onPressed:() => _decrementProductNum(index)), // icon-2
+                          ],
                         ),
+
+
                       );
                     }
                 )
@@ -157,4 +199,3 @@ class _shopListItem extends State<MyShopApp>{
   }
 
 }
-
