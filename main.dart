@@ -1,38 +1,108 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'menu_drawer.dart';
+import 'get_info.dart' as getinfo;
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main(){
-  runApp(MaterialApp(
-    home: MyShopApp(),
-  ));
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'ShopTick',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      routes: <String, WidgetBuilder>{
+        'home':(context)=>new MyShopApp(),
+        'get_wiki_info': (BuildContext context) => new getinfo.get_info(),
+      },
+      initialRoute: 'home',
+    );
+  }
 }
+
 
 class MyShopApp extends StatefulWidget{
   @override
   _shopListItem createState() => _shopListItem();
 }
+
 class _shopListItem extends State<MyShopApp>{
-  final List<String> products=<String>[];
-  final List<int> nProds=<int>[];
+  List<String> products=<String>[];
+  List<String> nProds=<String>[];
   TextEditingController ProductNameController=TextEditingController();
 
+  @override
 
-  void AddProduct(){
+  void initState(){
+    super.initState();
+    _loadLists();
+  }
+
+  //Loading Lists as well as counts on start
+
+  _loadLists() async{
+    SharedPreferences prefs1=await SharedPreferences.getInstance();
+    SharedPreferences prefs2=await SharedPreferences.getInstance();
+
     setState(() {
+      products=(prefs1.getStringList('products')??<String>[]);
+      nProds=(prefs2.getStringList('nProds')??<String>[]);
+    });
+  }
+
+
+  //Adding elements to Lists after the click
+
+  _incrementLists() async{
+    SharedPreferences prefs1=await SharedPreferences.getInstance();
+    SharedPreferences prefs2=await SharedPreferences.getInstance();
+
+
+    setState(() {
+      products= prefs1.getStringList('products')??<String>[];
+      nProds=prefs2.getStringList('nProds')??<String>[];
+
       if(products.contains(ProductNameController.text)){
+
         int ind=products.indexOf(ProductNameController.text);
-        nProds.insert(ind, nProds[ind]+1);
+        int temp=int.parse(nProds[ind]) +1;
+        nProds[ind]=temp.toString();
+        prefs2.setStringList('nProds', nProds);
+
       }else {
         products.insert(0, ProductNameController.text);
-        nProds.insert(0, 0);
+        prefs1.setStringList('products', products);
+
+        nProds.insert(0, 1.toString());
+        prefs2.setStringList('nProds', nProds);
       }
     });
   }
+
+  _decrementLists(index) async{
+      SharedPreferences prefs1=await SharedPreferences.getInstance();
+      SharedPreferences prefs2=await SharedPreferences.getInstance();
+
+      setState(() {
+           products= prefs1.getStringList('products')??<String>[];
+           nProds=prefs2.getStringList('nProds')??<String>[];
+
+           products.removeAt(index);
+           prefs1.setStringList('products', products);
+
+           nProds.removeAt(index);
+           prefs2.setStringList('nProds', nProds);
+      });
+}
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MenuDrawer(),
       appBar: AppBar(
         title: Text("Today's shopping list"),
       ),
@@ -55,7 +125,7 @@ class _shopListItem extends State<MyShopApp>{
           RaisedButton(
               child: Text('Add Item'),
               onPressed: (){
-                AddProduct();
+                _incrementLists();
               }
           ),
           Expanded(
@@ -70,10 +140,16 @@ class _shopListItem extends State<MyShopApp>{
                         trailing: IconButton(
                             icon: Icon(Icons.close),
                             onPressed: (){
-                              setState(() {
-                                products.removeAt(index);
-                              });
+                              _decrementLists(index);
                             }
+
+//                                (){
+//                              setState(() {
+//                                products.removeAt(index);
+//                              });
+//                            }
+
+
                         ),
                       );
                     }
@@ -86,3 +162,4 @@ class _shopListItem extends State<MyShopApp>{
   }
 
 }
+
