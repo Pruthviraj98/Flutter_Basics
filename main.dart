@@ -94,6 +94,7 @@ class _shopListItem extends State<MyShopApp>{
           }
         });
     }
+    ProductNameController.clear();
   }
 
   _decrementLists(index) async{
