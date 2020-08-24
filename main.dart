@@ -135,6 +135,22 @@ class _shopListItem extends State<MyShopApp>{
     });
   }
 
+
+  _incrementProductNum (index) async{
+    SharedPreferences prefs2=await SharedPreferences.getInstance();
+
+    setState(() {
+      nProds=prefs2.getStringList('nProds');
+      int temp=int.parse(nProds[index]);
+      temp+=1;
+      nProds[index]=temp.toString();
+      prefs2.setStringList('nProds', nProds);
+    });
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -205,15 +221,17 @@ class _shopListItem extends State<MyShopApp>{
                                 child:
                                 ListTile(
                                     title:
-                                    Text((index+1).toString()+'. ${products[index]},  Quantity - (${nProds[index]})',
-                                       style: TextStyle(fontSize: 18),
+                                    Text((index+1).toString()+'.  '+ (products[index][0]).toUpperCase()+ products[index].substring(1, products[index].length),
+                                       style: TextStyle(fontSize: 18, color: Colors.black),
                                     ),
                                     trailing:
                                     Wrap(
-                                      spacing: 12, // space between two icons
+                                      spacing: 0, // space between two icons
                                       children: <Widget>[
-                                        IconButton(icon: Icon(Icons.remove_circle_outline), onPressed:() => _decrementProductNum(index), color: Colors.grey), // icon-2
-                                        IconButton(icon: Icon(Icons.close), onPressed: () => _decrementLists(index), color: Colors.redAccent), // icon-1
+                                        Container(decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))), child: IconButton(icon: Icon(Icons.exposure_neg_1), onPressed:() => _decrementProductNum(index), color: Colors.black)), // icon-1
+                                        Container(decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))), child: RaisedButton.icon(label:Text('${nProds[index]}', style: TextStyle(fontSize: 18, color: Colors.black)), onPressed: null, icon: Icon(Icons.equalizer, color: Colors.black,),)),
+                                        Container(decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))), child: IconButton(icon: Icon(Icons.exposure_plus_1), onPressed:() => _incrementProductNum(index), color: Colors.black)), // icon-2
+                                        Container(decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))), child: IconButton(icon: Icon(Icons.close), onPressed: () => _decrementLists(index), color: Colors.redAccent)), // icon-3
                                       ],
                                     ),
                                   ),
@@ -229,4 +247,3 @@ class _shopListItem extends State<MyShopApp>{
   }
 
 }
-
